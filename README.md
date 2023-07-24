@@ -12,3 +12,7 @@
 
 ## 実行
 `python3 fetch_submission.py abc???`
+
+## Note
+* 個人用です
+* Atcoder や Github のアカウント名は適宜切り替えてください
