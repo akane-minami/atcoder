@@ -3,8 +3,8 @@
 
 # python3 fetch_submission.py
 
+# import
 import requests
-import json
 import os
 import sys
 import re
@@ -13,14 +13,8 @@ import chromedriver_binary
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
-import subprocess
 import git
 import datetime
-
-args = sys.argv
-userID = "minamiA"
-api_path = "https://kenkoooo.com/atcoder/atcoder-api/results?user="
-submit_name = args[1]
 
 
 
@@ -30,15 +24,6 @@ def getSubmissionData(userID):
     response = requests.get(api_url)
     jsonData = response.json()
     return jsonData
-
-
-submissions = getSubmissionData(userID)
-submissions[:2]
-
-
-
-
-
 
 # 各問題において最も新しいAC提出のみを取得する
 # 各コンテストごとにまとめて返す
@@ -57,43 +42,25 @@ def collectNewestAcceptedSubmissions(submissions):
         result[sub["contest_id"]].append(sub)
     return result
 
+args = sys.argv
+submit_name = args[1]
+userID = "minamiA" #AtCoder username
+api_path = "https://kenkoooo.com/atcoder/atcoder-api/results?user="
+root = "submissions/"
 
-
-
+submissions = getSubmissionData(userID)
+submissions[:2]
 
 newestSubmits =  collectNewestAcceptedSubmissions(submissions)
 newestSubmits[submit_name][0]
 
-
-
-
-
-
-
-
-
-
-
-root = "submissions/"
-
+# 保存用ディレクトリ作成
 for contestName in newestSubmits:
     path = root + contestName
     os.makedirs(path, exist_ok=True)
 
-
-
-
-
-
-
-
-
-
-driver = webdriver.Chrome()
-
-# 追加したファイルの数を増やす
 add_cnt = 0
-
+driver = webdriver.Chrome()
 for submissions in newestSubmits.values():
     for sub in submissions:
         # 問題番号の取得
@@ -147,19 +114,16 @@ driver.quit()
 
 
 
-
+# git push
 if add_cnt == 0:
     # 何も追加していなければGitにアクセスしない
     print("No added submissions, end process")
 else:
-    # GitHubにプッシュ
-
     dt_now = datetime.datetime.now()
     repo_url = "https://github.com/akane-minami/atcoder.git"
     repo = git.Repo()
     repo.git.add("submissions/*")
     repo.git.commit("submissions/*", message="add submission: " + dt_now.strftime('%Y/%m/%d %H:%M:%S'))
     repo.git.push("origin", "main")
-
     print(f"Finished process, added {add_cnt} files")
 
