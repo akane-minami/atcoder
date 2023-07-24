@@ -2,6 +2,7 @@
 
 ## リンク
 <https://atcoder.jp/>
+
 <https://atcoder.jp/users/minamiA>
 
 ## 概要
